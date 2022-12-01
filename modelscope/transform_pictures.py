@@ -12,6 +12,7 @@ patch_resize_transform = transforms.Compose([
         lambda image: image.convert("RGB"),
         transforms.Resize((resolution, resolution), interpolation=Image.BICUBIC),
         transforms.ToTensor(), 
+        transforms.Normalize(mean, std),
     ])
 with open(json_root, 'r') as f:
     ann = json.load(f)
@@ -29,5 +30,5 @@ for v in ann:
     patch_img = torch.cat((patch_img1, patch_img2), dim=-1)
     k1 = images[0][len('test1/') :]
     k2 = images[1][len('test1/') :]
-    save_image(patch_img, "images/" + k1 + "-"+ k2)
+    save_image(patch_img, "imagesv1/" + k1 + "-"+ k2)
     i += 1

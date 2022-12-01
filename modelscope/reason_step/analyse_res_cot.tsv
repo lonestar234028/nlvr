@@ -1,0 +1,9 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+./answers/Let's solve this problem by splitting it into steps..json	5196	2826	487	1883	1213	3983	40.56%	74.58%
+./answers/The answer is after the proof..json	6415	3302	3058	55	6273	142	47.39%	92.08%
+./answers/Let's think about this logically..json	758	453	268	37	609	149	6.50%	10.88%
+./answers/Let's think like a detective step by step..json	2069	1130	199	740	501	1568	16.22%	29.70%
+./answers/Let's be realistic and think step by step..json	3126	1789	894	443	2030	1096	25.68%	44.87%
+./answers/First,.json	2656	1405	1094	157	2287	369	20.17%	38.12%
+./answers/Let's think step by step..json	3089	1728	877	484	1962	1127	24.80%	44.34%
+Ensemble	6609	3545	888	2176	2086	4523	50.88%	94.86%
