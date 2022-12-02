@@ -21,7 +21,7 @@ print("res_all:", len(res_all))
 
 weight = {}
 weight["./answers/Let's solve this problem by splitting it into steps..json"] = 1
-weight["./answers/The answer is after the proof..json"] = 500
+weight["./answers/The answer is after the proof..json"] = 1
 weight["./answers/Let's think about this logically..json"] = 1
 weight["./answers/Let's think like a detective step by step..json"] = 1
 weight["./answers/Let's be realistic and think step by step..json"] = 1
