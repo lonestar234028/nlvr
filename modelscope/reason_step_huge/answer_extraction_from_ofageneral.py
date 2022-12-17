@@ -18,7 +18,7 @@ from modelscope.preprocessors.multi_modal import OfaPreprocessor
 
 # -
 
-model = 'damo/ofa_visual-question-answering_pretrain_large_en'
+model = 'damo/ofa_visual-question-answering_pretrain_huge_en'
 preprocessor = OfaPreprocessor(model_dir=model)
 ofa_pipe = pipeline(
     Tasks.visual_question_answering,
@@ -41,7 +41,7 @@ with open(json_root, 'r') as f:
 print("ann:", len(ann))
 prompts = {}
 prompt = args.prompt.replace('#',' ').replace('*','\'')
-with open('./reasons/' + prompt + '.json', 'r') as f:
+with open('/home/taoli1/nlvr/ofa/reasons/' + prompt + '.json', 'r') as f:
     prompts = json.load(f)
 print("prompts:", len(prompts))
 
@@ -57,19 +57,24 @@ for i in tqdm(range(len(ann))):
     pmts = prompts[img_key].split('##')
     if len(pmts) != 3:
         continue
-    print("pmts:", pmts)
+#     print("pmts:", pmts)
     i += 1
     k1 = images[0][len('test1/') :]
     k2 = images[1][len('test1/') :]
     img = img_root + k1 + "-"+ k2
-    text = pmts[0] + ' left image:' + pmts[1] + ', right image:' + pmts[2] \
+#     text = pmts[0] + ' left image:' + pmts[1] + ', right image:' + pmts[2] \
+# + '. Therefore, does it make sense:' + v['sentence']
+    text = pmts[0] + ',left image:' + pmts[1] + ', right image:' + pmts[2] \
         + '. Therefore, does it make sense:' + v['sentence']
-    
+    if (pmts[1] == 'yes' or pmts[2] == 'yes' or pmts[1] == 'no' or pmts[2] == 'no'):
+        text = 'Does it make sense:' + v['sentence']
+    print(text)
     input = {'image': img, 'text': text}
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-with open('./answersv1/' + prompt + '.json', 'w') as f:
+with open('./answers_general/' + prompt + '.json', 'w') as f:
     json.dump( res, f)
+# -
 
 

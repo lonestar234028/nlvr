@@ -14,7 +14,10 @@ for f in os.listdir('./answers/'):
     res = {}
     with open('./answers/' + f, 'r') as f:
         res = json.load( f)
-        res_all[f.name] = res
+        resnew = {}
+        for k,v in res.items():
+            resnew[k.replace('=test1','##test1')] = v
+        res_all[f.name] = resnew
         print(f.name)
 #     print("res:", len(res))
 print("res_all:", len(res_all))

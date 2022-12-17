@@ -53,7 +53,7 @@ for i in tqdm(range(len(ann))):
     #     break
     v = ann[i]
     images = v['images']
-    img_key = v['sentence'] + '##' + '##'.join(images)
+    img_key = v['sentence'] + '=' + '##'.join(images)
     pmts = prompts[img_key].split('##')
     if len(pmts) != 3:
         continue

@@ -49,8 +49,8 @@ res = {}
 i = 0
 from tqdm import tqdm
 for i in tqdm(range(len(ann))):
-    # if i > 0:
-    #     break
+#     if i > 0:
+#         break
     v = ann[i]
     images = v['images']
     img_key = v['sentence'] + '##' + '##'.join(images)

@@ -3,9 +3,32 @@ json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
 ann = {}
 import json,os,sys
 import argparse
+import jsonlines
 
-with open(json_root, 'r') as f:
-    ann = json.load(f)
+def load_annotations():
+    items = []
+    with jsonlines.open(json_root) as reader:
+        # Build an index which maps image id with a list of hypothesis annotations.
+        count = 0
+        for annotation in reader:
+            dictionary = {}
+            dictionary["image_id_0"] = annotation["left_img"].split("/")[-1].split(".")[0]
+            dictionary["image_id_1"] = annotation["right_img"].split("/")[-1].split(".")[0]
+            dictionary["question_id"] = count
+
+            dictionary["sentence"] = str(annotation["caption"])
+            dictionary["labels"] = [int(annotation["label"])]
+            dictionary["concept"] = str(annotation["concept"])
+            dictionary["scores"] = [1.0]
+            dictionary["ud"] = str(annotation["id"])
+            items.append(dictionary)
+            count += 1
+            if count < 2:
+                print("loading_annotations: ")
+                print(dictionary)
+    return items
+
+ann = load_annotations()
 print("ann:", len(ann))
 res_all = {}
 i = 0
@@ -26,8 +49,6 @@ weight["./answers/Let's think about this logically..json"] = 1
 weight["./answers/Let's think like a detective step by step..json"] = 1
 weight["./answers/Let's be realistic and think step by step..json"] = 1
 weight["./answers/First,.json"] = 1
-weight["./answers/Firstly,.json"] = 1
-weight["./answers/_onestep.json"] = 1
 weight["./answers/Let's think step by step..json"] = 1
 
 # +
