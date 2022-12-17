@@ -66,6 +66,8 @@ for i in tqdm(range(len(ann))):
 # + '. Therefore, does it make sense:' + v['sentence']
     text = pmts[0] + ',left image:' + pmts[1] + ', right image:' + pmts[2] \
         + '. Therefore, does it make sense:' + v['sentence']
+    if (pmts[1] == 'yes' or pmts[2] == 'yes' or pmts[1] == 'no' or pmts[2] == 'no'):
+        text = 'Does it make sense:' + v['sentence']
     print(text)
     input = {'image': img, 'text': text}
     result = ofa_pipe(input)

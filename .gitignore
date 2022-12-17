@@ -5,7 +5,11 @@ __pycache__/
 
 # C extensions
 *.so
-
+modelscope/imagesv2/
+modelscope/images/
+modelscope/reason_step/reasons/*
+modelscope/reason_step/answers/*
+modelscope/reason_step/answersv1/*
 # Distribution / packaging
 .Python
 build/

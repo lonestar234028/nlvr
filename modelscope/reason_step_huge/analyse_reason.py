@@ -20,18 +20,20 @@ for f in os.listdir('./answers/'):
 print("res_all:", len(res_all))
 
 weight = {}
-weight["./answers/Let's solve this problem by splitting it into steps..json"] = 1
-weight["./answers/The answer is after the proof..json"] = 1
-weight["./answers/Let's think about this logically..json"] = 1
-weight["./answers/Let's think like a detective step by step..json"] = 1
-weight["./answers/Let's be realistic and think step by step..json"] = 1
-weight["./answers/First,.json"] = 1
-weight["./answers/Firstly,.json"] = 1
+# weight["./answers/Let's solve this problem by splitting it into steps..json"] = 1
+# weight["./answers/The answer is after the proof..json"] = 1
+# weight["./answers/Let's think about this logically..json"] = 1
+# weight["./answers/Let's think like a detective step by step..json"] = 1
+# weight["./answers/Let's be realistic and think step by step..json"] = 1
+# weight["./answers/First,.json"] = 1
+# weight["./answers/Firstly,.json"] = 1
+# weight["./answers/_onestep.json"] = 1
+# weight["./answers/Let's think step by step..json"] = 1
 weight["./answers/_onestep.json"] = 1
-weight["./answers/Let's think step by step..json"] = 1
-
+weight["./answers/caption.json"] = 1
+weight["./answers/Let's think.json"] = 1
 # +
-with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
+with open('analyse_res_cot_1207.tsv', 'w',encoding='utf-8') as file:
     file.write('Model\tCount\tCorrect\tFalse Positive\tFalse Negative\tPredictY\tPredictN\tAcc\tCoverage\n')
     res_ensemble = {}
     for p, res in res_all.items():
