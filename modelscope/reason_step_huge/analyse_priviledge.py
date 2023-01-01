@@ -1,0 +1,156 @@
+json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
+
+ann = {}
+import json,os,sys
+import argparse
+
+# +
+with open(json_root, 'r') as f:
+    ann = json.load(f)
+print("ann:", len(ann))
+res_all = {}
+weight = {}
+
+i = 0
+prompt = 'First,'
+for f in os.listdir('./answers/'):
+    res = {}
+    with open('./answers/' + f, 'r') as f:
+        res = json.load( f)
+        res_all[f.name] = res
+        weight[f.name] = 1
+        print(f.name)
+#     print("res:", len(res))
+print("res_all:", len(res_all))
+print("weight:",weight)
+# -
+
+# for f in os.listdir('./answers_general/'):
+#     res = {}
+#     with open('./answers_general/' + f, 'r') as f:
+#         res = json.load( f)
+#         res_all[f.name] = res
+#         print(f.name)
+# #     print("res:", len(res))
+# print("res_all:", len(res_all))
+
+# +
+
+with open('analyse_res_cot_1230_pri.tsv', 'w',encoding='utf-8') as file:
+    file.write('Model\tCount\tCorrect\tFalse Positive\tFalse Negative\tPredictY\tPredictN\tImage Key\n')
+    res_ensemble = {}
+    for p, res in res_all.items():
+        all = 0
+        
+     
+        acc = 0
+        coverate = 0
+        for i in range(len(ann)):
+            correct = 0
+            fp = 0
+            fn = 0
+            pred_Y = 0
+            pred_N = 0
+            v = ann[i]
+            images = v['images']
+            img_key = v['sentence'] + '##' + '##'.join(images)
+            r = res[img_key].strip()
+#             if i == 4:
+#                 print(img_key)
+            if r == 'yes' or r == 'no':
+                if img_key in res_ensemble:
+                    if r in res_ensemble[img_key]:
+                        res_ensemble[img_key][r] += weight[p]
+                    else: 
+                        res_ensemble[img_key][r] = weight[p]
+                else:
+                    res_ensemble[img_key] = {r:weight[p]}
+           
+            if r == 'yes':
+                all += 1
+                pred_Y += 1
+                if v['label'] == 'True':
+                    correct += 1
+                else:
+                    fp += 1
+            elif  r == 'no':
+                all += 1
+                pred_N += 1
+                if v['label'] == 'False':
+                    correct += 1
+                else: 
+                    fn += 1
+            file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format(p,all,correct,fp,fn,pred_Y,pred_N, img_key))
+
+    i = 0
+    all = 0
+    correct = 0
+   
+    acc = 0
+    coverate = 0
+    res_es = {}
+    for k,v in res_ensemble.items():
+        r = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
+        y = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
+
+        if i == 99:
+            print("res_ensemble:",v)
+            print("res_ensemble sorted:", sorted(v.items(), key=lambda key_value: key_value[1], reverse=True))
+        res_es[k] = y
+        i += 1
+    print("res_es:",len(res_es))
+
+    for i in range(len(ann)):
+            fp = 0
+            fn = 0
+            pred_Y = 0
+            pred_N = 0
+
+            v = ann[i]
+            images = v['images']
+            img_key = v['sentence'] + '##' + '##'.join(images)
+            if img_key not in res_es:
+                continue
+            r = res_es[img_key].strip()
+            if i == 4:
+                print(img_key)
+
+            if r == 'yes':
+                all += 1
+                pred_Y += 1
+                if v['label'] == 'True':
+                    correct += 1
+                else:
+                    fp += 1
+            elif  r == 'no':
+                all += 1
+                pred_N += 1
+                if v['label'] == 'False':
+                    correct += 1
+                else: 
+                    fn += 1
+            else :
+                print(k)
+                print(r)
+                
+    file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format('Ensemble',all,correct,fp,fn,pred_Y,pred_N,img_key))
+   
+# -
+
+#     print(res_ensemble['The right image shows three bottles of beer lined up.##test1/test1-0-0-img0.png##test1/test1-0-0-img1.png'])
+
+#     i += 1
+#     k1 = images[0][len('test1/') :]
+#     k2 = images[1][len('test1/') :]
+#     img = img_root + k1 + "-"+ k2
+#     text = pmts[0] + ' left image:' + pmts[1] + ', right image:' + pmts[2] \
+# + '. Therefore, does it make sense:' + v['sentence']
+
+#     input = {'image': img, 'text': text}
+#     result = ofa_pipe(input)
+#     reason = result[OutputKeys.TEXT][0]
+#     res[img_key] = reason
+
+# -
+
+

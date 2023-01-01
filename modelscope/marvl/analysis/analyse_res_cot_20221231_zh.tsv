@@ -1,0 +1,9 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+./answers/zh-Am I making sense:_onestep.json	745	426	158	161	353	392	42.09%	73.62%
+./answers/zh-vqa:_onestep.json	953	534	288	131	633	320	52.77%	94.17%
+./answers/zh-nlvr:_onestep.json	905	505	297	103	643	262	49.90%	89.43%
+./answers/zh-First,.json	370	184	142	44	264	106	18.18%	36.56%
+./answers/zh-Let's think.json	566	293	128	145	242	324	28.95%	55.93%
+./answers/zh-Does it make sense:_onestep.json	986	521	225	240	477	509	51.48%	97.43%
+./answers/zh-_onestep.json	769	434	177	158	394	375	42.89%	75.99%
+Ensemble	1008	574	257	177	583	425	56.72%	99.60%

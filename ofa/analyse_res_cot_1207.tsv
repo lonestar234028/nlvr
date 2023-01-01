@@ -1,0 +1,5 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+./answers/Firstly,.json	6950	3886	2350	714	5186	1764	55.78%	99.76%
+./answers/First,.json	6949	3879	2372	698	5222	1727	55.68%	99.74%
+./answers/Let's think.json	6860	3824	2246	790	4961	1899	54.89%	98.46%
+Ensemble	6961	3946	1924	1091	4387	2574	56.64%	99.91%

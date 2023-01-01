@@ -31,45 +31,48 @@ parser.add_argument("--prompt", default='First,', type=str,
 parser.add_argument("--device", default='', type=str,
                     help="device gpu")
 
+parser.add_argument("--lang", default='ta', type=str,
+                    help="lang")
 args, _ = parser.parse_known_args()
 
 if len(args.device) > 0:
     os.environ['CUDA_VISIBLE_DEVICES'] = args
-
-with open(json_root, 'r') as f:
-    ann = json.load(f)
+from dataset import *
+ann = load_annotations(args.lang)
 print("ann:", len(ann))
+
 prompts = {}
 prompt = args.prompt.replace('#',' ').replace('*','\'')
-with open('./reasons/' + prompt + '.json', 'r') as f:
+
+
+lang =  args.lang
+with open('reasons/' + lang +'_' + prompt + '.json', 'r') as f:
     prompts = json.load(f)
 print("prompts:", len(prompts))
 
 res = {}
-i = 0
 from tqdm import tqdm
 for i in tqdm(range(len(ann))):
-#     if i > 0:
-#         break
+    # if i > 0:
+    #     break
     v = ann[i]
-    images = v['images']
-    img_key = v['sentence'] + '##' + '##'.join(images)
+    img_key = v['image_id_0'] + '##' + v['image_id_1']
     pmts = prompts[img_key].split('##')
     if len(pmts) != 3:
         continue
     print("pmts:", pmts)
-    i += 1
-    k1 = images[0][len('test1/') :]
-    k2 = images[1][len('test1/') :]
-    img = img_root + k1 + "-"+ k2
+    img = "images/" + lang + '/' + img_key + '.jpg'
     text = pmts[0] + ' left image:' + pmts[1] + ', right image:' + pmts[2] \
         + '. Therefore, does it make sense:' + v['sentence']
-    
+    if i == 0:
+        print("img:", img)
+        print("text:", text)
     input = {'image': img, 'text': text}
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-with open('./answersv1/' + prompt + '.json', 'w') as f:
+
+with open('./answers/' + lang + '-' + prompt + '.json', 'w') as f:
     json.dump( res, f)
 
 

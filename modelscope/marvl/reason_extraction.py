@@ -5,15 +5,35 @@ json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
 ann = {}
 import json,os,sys
 import torch
-from PIL import Image
+
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--prompt", default="Firstly,", type=str,
+                    help="prompt")
+parser.add_argument("--device", default='', type=str,
+                    help="device gpu")
+
+
+parser.add_argument("--lang", default='ta', type=str,
+                    help="lang")
+
+args, _ = parser.parse_known_args()
+
+lang =  args.lang
+if len(args.device) > 0:
+    os.environ['CUDA_VISIBLE_DEVICES'] = args
+
+from dataset import *
+ann = load_annotations(args.lang)
+print("ann:", len(ann))
+
+
 from torchvision import transforms
-from torchvision.utils import save_image
 from modelscope.pipelines import pipeline
 from modelscope.utils.constant import Tasks
 from modelscope.outputs import OutputKeys
 from modelscope.preprocessors.multi_modal import OfaPreprocessor
-import argparse
-
 model = 'damo/ofa_visual-question-answering_pretrain_large_en'
 preprocessor = OfaPreprocessor(model_dir=model)
 ofa_pipe = pipeline(
@@ -21,20 +41,6 @@ ofa_pipe = pipeline(
     model=model,
     preprocessor=preprocessor)
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--prompt", default=2, type=str,
-                    help="prompt")
-parser.add_argument("--device", default='', type=str,
-                    help="device gpu")
-
-args, _ = parser.parse_known_args()
-
-if len(args.device) > 0:
-    os.environ['CUDA_VISIBLE_DEVICES'] = args
-
-with open(json_root, 'r') as f:
-    ann = json.load(f)
-print("ann:", len(ann))
 # def get_img_path(v):
 #     images = v['images']
 #     k1 = images[0][len('test1/') :]
@@ -45,22 +51,24 @@ print("ann:", len(ann))
 
 res = {}
 prompt = args.prompt.replace('#',' ').replace('*','\'')
+img_root = '/vc_data/users/taoli1/topic/marvl-images/' + lang + '/images/'
+imgid2paths = load_images_path(img_root)
+
 from tqdm import tqdm
 for i in tqdm(range(len(ann))):
-#     if i > 0:
-#         break
+    # if i > 0:
+    #     break
     v = ann[i]
-    images = v['images']
-    img_key = v['sentence'] + '##' + '##'.join(images)
-    i += 1
+    img_key = v['image_id_0'] + '##' + v['image_id_1']
     text = prompt
     reason = text + '##'
-    input = {'image': img_root + images[0], 'text': text}
+    print("imgid2paths[v['image_id_0']]:", imgid2paths[v['image_id_0']])
+    input = {'image': imgid2paths[v['image_id_0']], 'text': text}
     result = ofa_pipe(input)
     reason += result[OutputKeys.TEXT][0] + '##'
-    input = {'image': img_root + images[1], 'text': text}
+    input = {'image': imgid2paths[v['image_id_0']], 'text': text}
     result = ofa_pipe(input)
     reason += result[OutputKeys.TEXT][0]
     res[img_key] = reason
-with open('reasons/' + prompt + '.json', 'w') as f:
+with open('reasons/' + lang +'_' + prompt + '.json', 'w') as f:
     json.dump(res, f)

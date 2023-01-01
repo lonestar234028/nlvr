@@ -1,5 +1,3 @@
-img_root = '/vc_data/users/taoli1/topic/marvl-images/zh/images/'
-json_root = '/home/taoli1/marvl-code-forked/data/zh/annotations_machine-translate/marvl-zh_gmt.jsonl'
 
 ann = {}
 import json
@@ -20,7 +18,11 @@ patch_resize_transform = transforms.Compose([
         transforms.Normalize(mean, std),
     ])
 
-    
+import sys
+lang =  sys.argv[1]
+img_root = '/vc_data/users/taoli1/topic/marvl-images/' + lang + '/images/'
+json_root = '/home/taoli1/marvl-code-forked/data/'+ lang + '/annotations_machine-translate/marvl-' + lang +'_gmt.jsonl'
+
 def load_annotations():
     items = []
     with jsonlines.open(json_root) as reader:
@@ -47,6 +49,8 @@ def load_annotations():
 def load_images_path():
     paths = {}
     for dirs in os.listdir(img_root):
+        if dirs.startswith('.DS'):
+            continue
         for dir in os.listdir(img_root + dirs):
             path_dir = (img_root + dirs + '/' + dir)
             paths[dir.split(".")[0]] = path_dir
@@ -81,5 +85,5 @@ for i in tqdm(range(len(ann))):
     img_key = v['image_id_0'] + '##' + v['image_id_1']
     patch_img = insert_image(v, imgid2paths)
     
-    save_image(patch_img, "images/zh/" + img_key + '.jpg')
+    save_image(patch_img, "images/" + lang + '/' + img_key + '.jpg')
     i += 1

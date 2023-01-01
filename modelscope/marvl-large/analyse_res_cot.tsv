@@ -1,0 +1,7 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+./answers/Am I making sense:_onestep.json	873	465	149	259	321	552	45.95%	86.26%
+./answers/_onestep.json	769	434	177	158	394	375	42.89%	75.99%
+./answers/Does it make sense:_onestep.json	983	530	186	267	405	578	52.37%	97.13%
+./answers/nlvr:_onestep.json	803	452	76	275	190	613	44.66%	79.35%
+./answers/vqa:_onestep.json	833	439	153	241	317	516	43.38%	82.31%
+Ensemble	990	540	82	368	204	786	53.36%	97.83%

@@ -1,0 +1,9 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+./answers/ta-Let's think.json	728	381	120	227	253	475	30.68%	58.62%
+./answers/ta-First,.json	456	226	148	82	281	175	18.20%	36.71%
+./answers/ta-vqa:_onestep.json	1170	640	338	192	724	446	51.53%	94.20%
+./answers/ta-nlvr:_onestep.json	1158	645	352	161	761	397	51.93%	93.24%
+./answers/ta-Am I making sense:_onestep.json	784	435	120	229	262	522	35.02%	63.12%
+./answers/ta-_onestep.json	1087	594	329	164	705	382	47.83%	87.52%
+./answers/ta-Does it make sense:_onestep.json	1232	707	181	344	448	784	56.92%	99.19%
+Ensemble	1240	688	299	253	661	579	55.39%	99.84%

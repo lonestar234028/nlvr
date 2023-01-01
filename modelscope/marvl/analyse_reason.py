@@ -1,9 +1,10 @@
-json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
 
 ann = {}
 import json,os,sys
 import argparse
 import jsonlines
+lang = sys.argv[1]
+json_root = '/home/taoli1/marvl-code-forked/data/'+ lang + '/annotations_machine-translate/marvl-' + lang +'_gmt.jsonl'
 
 def load_annotations():
     items = []
@@ -18,6 +19,7 @@ def load_annotations():
 
             dictionary["sentence"] = str(annotation["caption"])
             dictionary["labels"] = [int(annotation["label"])]
+            dictionary["label"] = annotation["label"]
             dictionary["concept"] = str(annotation["concept"])
             dictionary["scores"] = [1.0]
             dictionary["ud"] = str(annotation["id"])
@@ -33,26 +35,27 @@ print("ann:", len(ann))
 res_all = {}
 i = 0
 prompt = 'First,'
+weight = {}
 for f in os.listdir('./answers/'):
     res = {}
+    if not f.startswith(lang):
+        continue
     with open('./answers/' + f, 'r') as f:
         res = json.load( f)
+        # if 'think'  in f.name:
+        #     continue
         res_all[f.name] = res
         print(f.name)
-#     print("res:", len(res))
-print("res_all:", len(res_all))
+        w = 1 
 
-weight = {}
-weight["./answers/Let's solve this problem by splitting it into steps..json"] = 1
-weight["./answers/The answer is after the proof..json"] = 1
-weight["./answers/Let's think about this logically..json"] = 1
-weight["./answers/Let's think like a detective step by step..json"] = 1
-weight["./answers/Let's be realistic and think step by step..json"] = 1
-weight["./answers/First,.json"] = 1
-weight["./answers/Let's think step by step..json"] = 1
+        weight[f.name] = w
+print("weight:", weight)
+print("res_all:", len(res_all))
+print("json_root:", json_root)
+
 
 # +
-with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
+with open('./analysis/analyse_res_cot_20221231_' + lang + '.tsv', 'w',encoding='utf-8') as file:
     file.write('Model\tCount\tCorrect\tFalse Positive\tFalse Negative\tPredictY\tPredictN\tAcc\tCoverage\n')
     res_ensemble = {}
     for p, res in res_all.items():
@@ -67,8 +70,10 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
         for i in range(len(ann)):
 
             v = ann[i]
-            images = v['images']
-            img_key = v['sentence'] + '##' + '##'.join(images)
+            img_key = v['image_id_0'] + '##' + v['image_id_1']
+            if img_key not in res:
+                print("img_key not in res:",img_key, v['sentence'])
+                continue
             r = res[img_key].strip()
 #             if i == 4:
 #                 print(img_key)
@@ -83,18 +88,18 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
             if r == 'yes':
                 all += 1
                 pred_Y += 1
-                if v['label'] == 'True':
+                if v['label'] == True:
                     correct += 1
                 else:
                     fp += 1
             elif  r == 'no':
                 all += 1
                 pred_N += 1
-                if v['label'] == 'False':
+                if v['label'] == False:
                     correct += 1
                 else: 
                     fn += 1
-        file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.2%}\t{:.2%}\n".format(p,all,correct,fp,fn,pred_Y,pred_N,correct/6967,all/6967))
+        file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.2%}\t{:.2%}\n".format(p,all,correct,fp,fn,pred_Y,pred_N,correct/len(ann),all/len(ann)))
         print("prompt:",p)
         print("all:",all)
         print("correct:",correct)
@@ -102,8 +107,8 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
         print("fn:",fn)
         print("pred_Y:",pred_Y)
         print("pred_N:",pred_N)
-        print("acc:",correct / 6967)
-        print("coverate:", all / 6967)
+        print("acc:",correct / len(ann))
+        print("coverate:", all / len(ann))
         print("+++++++++++++")
     i = 0
     all = 0
@@ -116,11 +121,11 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
     coverate = 0
     res_es = {}
     for k,v in res_ensemble.items():
-        r = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
-        y = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
+        r = sorted(v.items(), key=lambda key_value: key_value[1], reverse=True)[0][0]
+        y = sorted(v.items(), key=lambda key_value: key_value[1], reverse=True)[0][0]
 
-        if i == 1099:
-            print(v)
+        if i == 199:
+            print("res_ensemble:", v)
             print( sorted(v.items(), key=lambda key_value: key_value[1], reverse=True))
         res_es[k] = y
         i += 1
@@ -129,8 +134,7 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
     for i in range(len(ann)):
 
             v = ann[i]
-            images = v['images']
-            img_key = v['sentence'] + '##' + '##'.join(images)
+            img_key = v['image_id_0'] + '##' + v['image_id_1']
             if img_key not in res_es:
                 continue
             r = res_es[img_key].strip()
@@ -140,14 +144,14 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
             if r == 'yes':
                 all += 1
                 pred_Y += 1
-                if v['label'] == 'True':
+                if v['label'] == True:
                     correct += 1
                 else:
                     fp += 1
             elif  r == 'no':
                 all += 1
                 pred_N += 1
-                if v['label'] == 'False':
+                if v['label'] == False:
                     correct += 1
                 else: 
                     fn += 1
@@ -155,7 +159,7 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
                 print(k)
                 print(r)
                 
-    file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.2%}\t{:.2%}\n".format('Ensemble',all,correct,fp,fn,pred_Y,pred_N,correct/6967,all/6967))
+    file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.2%}\t{:.2%}\n".format('Ensemble',all,correct,fp,fn,pred_Y,pred_N,correct/len(ann),all/len(ann)))
     print("prompt:",'Ensemble')
     print("all:",all)
     print("correct:",correct)
@@ -163,8 +167,8 @@ with open('analyse_res_cot.tsv', 'w',encoding='utf-8') as file:
     print("fn:",fn)
     print("pred_Y:",pred_Y)
     print("pred_N:",pred_N)
-    print("acc:",correct / 6967)
-    print("coverate:", all / 6967)
+    print("acc:",correct / len(ann))
+    print("coverate:", all / len(ann))
     print("+++++++++++++")    
         
 #     print(res_ensemble['The right image shows three bottles of beer lined up.##test1/test1-0-0-img0.png##test1/test1-0-0-img1.png'])
