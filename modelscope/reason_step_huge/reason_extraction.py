@@ -47,8 +47,8 @@ res = {}
 prompt = args.prompt.replace('#',' ').replace('*','\'')
 from tqdm import tqdm
 for i in tqdm(range(len(ann))):
-#     if i > 0:
-#         break
+    if i > 0:
+        break
     v = ann[i]
     images = v['images']
     img_key = v['sentence'] + '##' + '##'.join(images)
@@ -56,9 +56,11 @@ for i in tqdm(range(len(ann))):
     text = prompt
     reason = text + '##'
     input = {'image': img_root + images[0], 'text': text}
+    print("input1:",input)
     result = ofa_pipe(input)
     reason += result[OutputKeys.TEXT][0] + '##'
     input = {'image': img_root + images[1], 'text': text}
+    print("input2:",input)
     result = ofa_pipe(input)
     reason += result[OutputKeys.TEXT][0]
     res[img_key] = reason

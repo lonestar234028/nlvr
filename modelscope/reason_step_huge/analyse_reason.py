@@ -11,6 +11,8 @@ res_all = {}
 i = 0
 prompt = 'First,'
 for f in os.listdir('./answers/'):
+    if not f.endswith('json'):
+        continue
     res = {}
     with open('./answers/' + f, 'r') as f:
         res = json.load( f)
@@ -28,7 +30,6 @@ print("res_all:", len(res_all))
 # #     print("res:", len(res))
 # print("res_all:", len(res_all))
 
-# +
 weight = {}
 # weight["./answers/Let's solve this problem by splitting it into steps..json"] = 1
 # weight["./answers/The answer is after the proof..json"] = 1
@@ -46,7 +47,7 @@ weight["./answers/Let's think.json"] = 1
 # weight["./answers_general/Firstly,.json"] = 1
 # weight["./answers_general/Let's think.json"] = 1
 # # +
-with open('analyse_res_cot_1207_v2.tsv', 'w',encoding='utf-8') as file:
+with open('analyse_res_cot_1207_v3.tsv', 'w',encoding='utf-8') as file:
     file.write('Model\tCount\tCorrect\tFalse Positive\tFalse Negative\tPredictY\tPredictN\tAcc\tCoverage\n')
     res_ensemble = {}
     for p, res in res_all.items():
@@ -90,16 +91,6 @@ with open('analyse_res_cot_1207_v2.tsv', 'w',encoding='utf-8') as file:
                 else: 
                     fn += 1
         file.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{:.2%}\t{:.2%}\n".format(p,all,correct,fp,fn,pred_Y,pred_N,correct/6967,all/6967))
-        print("prompt:",p)
-        print("all:",all)
-        print("correct:",correct)
-        print("fp:",fp)
-        print("fn:",fn)
-        print("pred_Y:",pred_Y)
-        print("pred_N:",pred_N)
-        print("acc:",correct / 6967)
-        print("coverate:", all / 6967)
-        print("+++++++++++++")
     i = 0
     all = 0
     correct = 0
@@ -111,9 +102,8 @@ with open('analyse_res_cot_1207_v2.tsv', 'w',encoding='utf-8') as file:
     coverate = 0
     res_es = {}
     for k,v in res_ensemble.items():
-        r = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
-        y = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
-
+#         y = sorted(v, key=lambda key_value: key_value[1], reverse=True)[0]
+        y = sorted(v.items(), key=lambda key_value: key_value[1], reverse=True)[0][0]
 #         if r != sorted(v.items(), key=lambda key_value: key_value[1], reverse=True)[0][0]:
 #             print("res_ensemble:",r)
 #             print("res_ensemble sorted:", sorted(v.items(), key=lambda key_value: key_value[1], reverse=True))
@@ -159,7 +149,6 @@ with open('analyse_res_cot_1207_v2.tsv', 'w',encoding='utf-8') as file:
     print("acc:",correct / 6967)
     print("coverate:", all / 6967)
     print("+++++++++++++")    
-# -
 
 #     print(res_ensemble['The right image shows three bottles of beer lined up.##test1/test1-0-0-img0.png##test1/test1-0-0-img1.png'])
 
