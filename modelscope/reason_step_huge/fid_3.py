@@ -30,7 +30,7 @@ parser.add_argument("--prompt", default='First,', type=str,
                     help="prompt")
 parser.add_argument("--device", default='', type=str,
                     help="device gpu")
-parser.add_argument("--filename", default='20230220', type=str,
+parser.add_argument("--filename", default='20230226', type=str,
                     help="device gpu")
 args, _ = parser.parse_known_args()
 
@@ -53,11 +53,15 @@ print("prompts:", len(promptsall))
 res = {}
 from tqdm import tqdm
 texts = []
+magic = 99
+
 for i in tqdm(range(len(ann))):
     v = ann[i]
     text = ['Does it make sense:' + v['sentence']]
-    # if i > 0:
+    # if i > magic :
     #     break
+    # if i < magic:
+    #     continue
     images = v['images']
     img_key = v['sentence'] + '##' + '##'.join(images)
     k1 = images[0][len('test1/') :]
@@ -85,7 +89,10 @@ for i in tqdm(range(len(ann))):
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-with open('./answers_fid_three/' + args.filename + '.json', 'w') as f:
+ff = './answers_fid_three/' + args.filename + '.json'
+print("writing:",ff)
+print(res)
+with open(ff, 'w') as f:
     json.dump( res, f)
 # -
 

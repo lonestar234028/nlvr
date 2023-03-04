@@ -1,0 +1,2 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+FiD_2Patch_Retrieve	6957	3891	2836	230	6159	798	55.85%	99.86%
