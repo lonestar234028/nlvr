@@ -32,6 +32,10 @@ parser.add_argument("--device", default='', type=str,
                     help="device gpu")
 parser.add_argument("--filename", default='20230226', type=str,
                     help="device gpu")
+parser.add_argument("--partpre", default=0, type=str,
+                    help="partpre")
+parser.add_argument("--partpost", default=6967, type=str,
+                    help="partpost")
 args, _ = parser.parse_known_args()
 
 if len(args.device) > 0:
@@ -49,13 +53,19 @@ for file in os.listdir("./reasons_v2/"):
             promptsall.append(prompts_tmp)
 print("prompts:", len(promptsall))
 
+start = args.partpre
+end = args.partpost
+if isinstance(start, str):
+    start = int(start)
+if isinstance(end, str):
+    end = int(end)
 
 res = {}
 from tqdm import tqdm
 texts = []
 magic = 99
 
-for i in tqdm(range(len(ann))):
+for i in tqdm(range(start,end)):
     v = ann[i]
     text = ['Does it make sense:' + v['sentence']]
     if i > magic :
@@ -89,7 +99,7 @@ for i in tqdm(range(len(ann))):
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-ff = './answers_fid_20230311/' + args.filename + '.json'
+ff = './answers_fid_20230311/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
 print("writing:",ff)
 print("res:", res)
 with open(ff, 'w') as f:
