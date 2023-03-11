@@ -68,10 +68,10 @@ magic = 99
 for i in tqdm(range(start,end)):
     v = ann[i]
     text = ['Does it make sense:' + v['sentence']]
-    if i > magic :
-        break
-    if i < magic:
-        continue
+    # if i > magic :
+    #     break
+    # if i < magic:
+    #     continue
     images = v['images']
     img_key = v['sentence'] + '##' + '##'.join(images)
     k1 = images[0][len('test1/') :]
