@@ -132,3 +132,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+nlvr2_images_4_test2json/
+temp_nlvr2_images_4_test2json/
+

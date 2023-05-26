@@ -99,7 +99,7 @@ for i in tqdm(range(start,end)):
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-ff = './answers_fid_20230311/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
+ff = './answers_fid_20230525/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
 print("writing:",ff)
 print("res:", res)
 with open(ff, 'w') as f:

@@ -1,7 +1,10 @@
 # img_root = '/home/taoli1/nlvr/modelscope/images/'
-img_root = '/vc_data/users/taoli1/mm/nlvr/'
+import data_prepare as nlvr_data
 
-json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
+img_root = str(nlvr_data.d.img_root_abs)
+json_root = nlvr_data.d.test_json_abs_path
+print("img_root->", img_root)
+print("json_root->", json_root)
 ann = {}
 import json,os,sys
 import torch
