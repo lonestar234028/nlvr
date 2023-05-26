@@ -47,7 +47,9 @@ print("ann:", len(ann))
 
 
 prompts =  []
-with open('prompt_v2.txt', 'r') as f:
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+with open(os.path.join(current_dir, 'prompt_v2.txt') , 'r') as f:
     prompts = f.readlines()
 
 

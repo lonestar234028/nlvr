@@ -38,9 +38,9 @@ class NLVR2_DATA(object):
         self.repo_abs_path = os.path.sep.join(file_abs.split(os.path.sep)[:-3])
 
         self.submodule_path = "nlvr_data_submodule"
-        self.test_json_path = "nlvr2/data/test1.json"
+        self.test_json_path = "test.json"
         self.submodule_abs_path = os.path.join(self.repo_abs_path, self.submodule_path)
-        self.test_json_abs_path = os.path.join(self.submodule_abs_path, self.test_json_path)
+        self.test_json_abs_path = os.path.join(self.repo_abs_path, self.test_json_path)
         self.img_root = os.path.join(self.repo_abs_path, "nlvr2_images_4_test2json")
         self.img_zip_url = "https://lil.nlp.cornell.edu/resources/NLVR2/test1_img.zip"
         self.img_temp_abs_path = os.path.join(self.repo_abs_path, "temp_nlvr2_images_4_test2json")
