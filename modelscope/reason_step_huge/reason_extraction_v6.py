@@ -63,31 +63,45 @@ if isinstance(start, str):
 if isinstance(end, str):
     end = int(end)
 
+batch_size = 2
 from tqdm import tqdm
 for prompt in prompts:
-    for i in tqdm(range(start,end)):
+    for i in tqdm(range(start,2, batch_size)):
        
         # if i > magic:
         #     break
         # if i < magic:
         #     continue
-        v = ann[i]
-        images = v['images']
-       
-        img_key = v['sentence'] + '##' + '##'.join(images)
+        v = ann[i: min(end, i + batch_size)]
+        images = [x['images'] for x in v]
+        
+        img_key = [ av['sentence'] + '##' + '##'.join(aimages) for av, aimages in zip(v, images)]
         text = prompt.strip()
       
-        reason = text + '##'
-        input1 = {'image': img_root + images[0], 'text': text}
+        reason = [text + '##'] * len(images)
+
+        input1 = [{'image': str(os.path.join(img_root, aimages[0])), 'text': text} for aimages in images]
+
         result = ofa_pipe(input1)
-        reason += result[OutputKeys.TEXT][0] + '##'
-        input2 = {'image': img_root + images[1], 'text': text}
-        
+
+        # reason += result[OutputKeys.TEXT][0] + '##'
+
+        reason = [ r1 + r2[OutputKeys.TEXT][0] + '##' for r1, r2 in zip(reason,result)]
+
+        # input2 = {'image': str(os.path.join(img_root, images[1])), 'text': text}
+
+        input2 = [{'image': str(os.path.join(img_root, aimages[1])), 'text': text} for aimages in  images]
         result = ofa_pipe(input2)
-        reason += result[OutputKeys.TEXT][0]
-        res[img_key] = reason
+
+        # reason += result[OutputKeys.TEXT][0]
+        reason = [ r1 + r2[OutputKeys.TEXT][0] for r1, r2 in zip(reason,result)]
+
+        # res[img_key] = reason
+        for k, r1 in zip(img_key, reason):
+            res[k] = r1
+
         print("input1:",input1)
         print("input2:",input2)
         
-    with open('reasons_v6/' + prompt + '_part_'+ str(start) +'_' +  str(end) + '.json', 'w') as f:
+    with open(os.path.join(current_dir, 'reasons_v6_1/' +  ''.join(i if i.isalnum() else '_' for i in prompt).lower() + '_part_'+ str(start) +'_' +  str(end) + '.json') , 'w') as f:
         json.dump(res, f)

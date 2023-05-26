@@ -1,5 +1,9 @@
-img_root = '/vc_data/users/taoli1/mm/nlvr/'
-json_root = '/vc_data/users/taoli1/mm/finetune/nlvr_test.json'
+import data_prepare as nlvr_data
+
+img_root = str(nlvr_data.d.img_root_abs)
+json_root = nlvr_data.d.test_json_abs_path
+print("img_root->", img_root)
+print("json_root->", json_root)
 
 ann = {}
 import json,os,sys
@@ -17,7 +21,7 @@ from modelscope.outputs import OutputKeys
 from modelscope.preprocessors.multi_modal import OfaPreprocessor
 
 # -
-
+current_dir = os.path.dirname(os.path.abspath(__file__))
 model = 'damo/ofa_visual-question-answering_pretrain_huge_en'
 preprocessor = OfaPreprocessor(model_dir=model)
 ofa_pipe = pipeline(
@@ -46,9 +50,10 @@ with open(json_root, 'r') as f:
 print("ann:", len(ann))
 promptsall = []
 prompt = args.prompt.replace('#',' ').replace('*','\'')
-for file in os.listdir("./reasons_v2/"):
+intermedia_rationals_dir = os.path.join(current_dir, 'reasons_v6_1')
+for file in os.listdir(intermedia_rationals_dir):
     if file.endswith('json'):
-        with open('./reasons_v2/' + file) as f:
+        with open( os.path.join(intermedia_rationals_dir, file)) as f:
             prompts_tmp = json.load(f)
             promptsall.append(prompts_tmp)
 print("prompts:", len(promptsall))
@@ -65,7 +70,7 @@ from tqdm import tqdm
 texts = []
 magic = 99
 
-for i in tqdm(range(start,end)):
+for i in tqdm(range(start,2)):
     v = ann[i]
     text = ['Does it make sense:' + v['sentence']]
     # if i > magic :
@@ -76,8 +81,8 @@ for i in tqdm(range(start,end)):
     img_key = v['sentence'] + '##' + '##'.join(images)
     k1 = images[0][len('test1/') :]
     k2 = images[1][len('test1/') :]
-    img1 = img_root + images[0]
-    img2 = img_root + images[1]
+    img1 = str(os.path.join(img_root, images[0]))
+    img2 = str(os.path.join(img_root, images[1]))
     print("img,img1,img2:", img1, img2)
     for prompts in promptsall:
       
@@ -99,7 +104,13 @@ for i in tqdm(range(start,end)):
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-ff = './answers_fid_20230525/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
+ff =  os.path.join(current_dir, 'answers_fid_20230526' 
+                   + args.filename 
+                   +  '_part_'+ str(start) 
+                   + '_' 
+                   +  str(end) + '.json')
+
+
 print("writing:",ff)
 print("res:", res)
 with open(ff, 'w') as f:
