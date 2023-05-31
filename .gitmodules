@@ -1,3 +1,6 @@
 [submodule "nlvr_data_submodule"]
 	path = nlvr_data_submodule
 	url = git@github.com:lil-lab/nlvr.git
+[submodule "vqa"]
+	path = vqa
+	url = git@github.com:Claber/VQA.git
