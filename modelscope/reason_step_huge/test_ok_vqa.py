@@ -6,6 +6,8 @@ ok_vqa_test:
 model: ofa
 evaluation_measure: https://visualqa.org/evaluation
 evaluation_demo:https://github.com/GT-Vision-Lab/VQA/blob/master/PythonEvaluationTools/vqaEvalDemo.py
+                modified(py2 -> py3) version in  submodule(nlvr/vqa):           
+                nlvr/vqa/PythonEvaluationTools/vqaEvalDemo.py
 leader_board: https://okvqa.allenai.org/leaderboard.html
 """
 # update to actual value before running
