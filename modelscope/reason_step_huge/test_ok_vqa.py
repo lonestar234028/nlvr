@@ -83,12 +83,14 @@ from modelscope.preprocessors.multi_modal import OfaPreprocessor
 
 # -
 current_dir = os.path.dirname(os.path.abspath(__file__))
+bt_sz = 10
 model = 'damo/ofa_visual-question-answering_pretrain_huge_en'
 preprocessor = OfaPreprocessor(model_dir=model)
 ofa_pipe = pipeline(
     Tasks.visual_question_answering,
     model=model,
-    preprocessor=preprocessor)
+    preprocessor=preprocessor,
+    batch_size = bt_sz)
 
 demo_result = ofa_pipe({'image':'http://xingchen-data.oss-cn-zhangjiakou.aliyuncs.com/maas/visual-question-answering/visual_question_answering.png','text':'what is grown on the plant?'})
 print("smoke test demo_result", demo_result)
@@ -110,17 +112,25 @@ for d in tqdm([test_path, train_path]):
         question_anns_js = json.load(f2)
         questions_anns = list(question_anns_js["annotations"])
         count_q = 0
-        for q_js,a_js in tqdm(list(zip (questions, questions_anns))):
+        q_ann_pairs = list(zip (questions, questions_anns))
+        num = len(q_ann_pairs)
+        for i in tqdm(range(0, num, bt_sz)):
+            q_ann_js_batch = q_ann_pairs[i: min(i + bt_sz ,num)]
             # print(q_js, a_js)
-            q = Question(q_js, a_js, d.pic_name_pattern_trans_fun, d.pic_path)
-            count_q+=1
-            q_and_a = {}
-            q_and_a.update({"question_id":int(q.question_id)})
-            input = {'image': q.image_abs_path, 'text': q.question_text}
-            answer = ofa_pipe(input)
-            q_and_a.update({"answer" :answer[OutputKeys.TEXT][0]})
-            res.append(q_and_a)
-            # if(count_q > 10):break
+            input_batch = []
+            output_batch = []
+            for q_js, a_js in q_ann_js_batch: 
+                q = Question(q_js, a_js, d.pic_name_pattern_trans_fun, d.pic_path)
+                count_q+=1
+                q_and_a = {}
+                q_and_a.update({"question_id":int(q.question_id)})
+                input_batch.append({'image': q.image_abs_path, 'text': q.question_text})
+                output_batch.append(q_and_a)
+            answer_batch = ofa_pipe(input_batch)
+            for a, p in zip(answer_batch, output_batch):
+                p.update({"answer" :a[OutputKeys.TEXT][0]})
+                res.append(p)
+            if(count_q > 100):break
         print("finished questions' num:", count_q)
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
