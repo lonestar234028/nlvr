@@ -129,6 +129,11 @@ def checker_itl(itl):
     return "answer" in itl and not itl["answer"].lower() in ("yes", "no")
 
 is_smoke_test_only = True
+check_list = []
+# 5393265
+with open("/root/code/diagnose_questions") as diagnose_f:
+    for i in diagnose_f:
+        check_list.append(int(i))
 
 for d in tqdm([test_path, train_path]):
     with open(d.quesion, 'r') as f, open(d.annotation, 'r') as f2, open(d.rationals_path, 'r') as f3:
@@ -143,6 +148,7 @@ for d in tqdm([test_path, train_path]):
 
         count_q = 0
         q_ann_pairs = list(zip (questions, questions_anns))
+        q_ann_pairs = [p for p in q_ann_pairs if p[0]["question_id"] in check_list]
         num = len(q_ann_pairs)
         for i in tqdm(range(0, num, bt_sz)):
             q_ann_js_batch = q_ann_pairs[i: min(i + bt_sz ,num)]
