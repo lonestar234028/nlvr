@@ -19,7 +19,7 @@ leader_board: https://okvqa.allenai.org/leaderboard.html
 #    mscoco_val2014_annotations.json
 #    OpenEnded_mscoco_train2014_questions.json
 #    OpenEnded_mscoco_val2014_questions.json
-okvqa_path = "/root/data_sets/ok_vqa/"
+okvqa_path = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/okvqa/annotations/"
 
 test_question_json_path = "OpenEnded_mscoco_val2014_questions.json"
 train_question_json_path = "OpenEnded_mscoco_train2014_questions.json"
@@ -31,6 +31,7 @@ test_pictures_path = "val2014"
 train_pictures_path = "train2014"
 test_picture_file_name_pattern = "COCO_val2014_{pic_name}"
 train_picture_file_name_pattern = "COCO_train2014_{pic_name}"
+okvqa_path_img = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/"
 
 def pic_path_pattern(pat_str):
     def p(image_id, image_dir):
@@ -71,10 +72,10 @@ class Question(object):
 
 
 test_path = ok_meta(os.path.join(okvqa_path, test_question_json_path), os.path.join(okvqa_path, test_annotations_json_path), 
-             os.path.join(okvqa_path, test_pictures_path), pic_path_pattern(test_picture_file_name_pattern), "test2014")
+             os.path.join(okvqa_path_img, test_pictures_path), pic_path_pattern(test_picture_file_name_pattern), "test2014")
 
 train_path = ok_meta(os.path.join(okvqa_path, train_question_json_path), os.path.join(okvqa_path, train_annotations_json_path), 
-             os.path.join(okvqa_path, train_pictures_path), pic_path_pattern(train_picture_file_name_pattern),"train2014")
+             os.path.join(okvqa_path_img, train_pictures_path), pic_path_pattern(train_picture_file_name_pattern),"train2014")
 
 from modelscope.pipelines import pipeline
 from modelscope.utils.constant import Tasks
@@ -105,7 +106,7 @@ result{
 res = []
 from tqdm import tqdm
 
-for d in tqdm([test_path, train_path]):
+for d in tqdm([train_path]):
     with open(d.quesion, 'r') as f, open(d.annotation, 'r') as f2:
         questions_js = json.load(f)
         questions = list(questions_js["questions"])
@@ -130,7 +131,7 @@ for d in tqdm([test_path, train_path]):
             for a, p in zip(answer_batch, output_batch):
                 p.update({"answer" :a[OutputKeys.TEXT][0]})
                 res.append(p)
-            if(count_q > 100):break
+            # if(count_q > 2):break
         print("finished questions' num:", count_q)
 
     current_dir = os.path.dirname(os.path.abspath(__file__))

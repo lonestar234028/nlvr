@@ -21,7 +21,7 @@ leader_board: https://okvqa.allenai.org/leaderboard.html
 #    mscoco_val2014_annotations.json
 #    OpenEnded_mscoco_train2014_questions.json
 #    OpenEnded_mscoco_val2014_questions.json
-okvqa_path = "/root/data_sets/ok_vqa/"
+okvqa_path = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/okvqa/annotations/"
 
 test_question_json_path = "OpenEnded_mscoco_val2014_questions.json"
 train_question_json_path = "OpenEnded_mscoco_train2014_questions.json"
@@ -85,15 +85,16 @@ class Question(object):
 def input_from_question(q):
     return {'image': q.image_abs_path, 
             'text': [q.question_text] 
-            + [rtl["prompt"] + ("" if rtl["prompt"].endswith(',') else ", ") + rtl["answer"] + ". Therefore, " + q.question_text  for rtl in q.rationals]
+            + [rtl["prompt"] + ("" if rtl["prompt"].endswith(',') else ", ") + rtl["answer"] + ". Does it make sense, " + q.question_text  for rtl in q.rationals]
             }
 
+okvqa_path_img = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/"
 
 test_path = ok_meta(os.path.join(okvqa_path, test_question_json_path), os.path.join(okvqa_path, test_annotations_json_path), 
-             os.path.join(okvqa_path, test_pictures_path), pic_path_pattern(test_picture_file_name_pattern), "test2014", os.path.join(okvqa_path, test_rationals_json_path))
+             os.path.join(okvqa_path_img, test_pictures_path), pic_path_pattern(test_picture_file_name_pattern), "test2014", os.path.join(okvqa_path, test_rationals_json_path))
 
 train_path = ok_meta(os.path.join(okvqa_path, train_question_json_path), os.path.join(okvqa_path, train_annotations_json_path), 
-             os.path.join(okvqa_path, train_pictures_path), pic_path_pattern(train_picture_file_name_pattern),"train2014", os.path.join(okvqa_path, train_rationals_json_path))
+             os.path.join(okvqa_path_img, train_pictures_path), pic_path_pattern(train_picture_file_name_pattern),"train2014", os.path.join(okvqa_path, train_rationals_json_path))
 
 from modelscope.pipelines import pipeline
 from modelscope.utils.constant import Tasks
@@ -111,8 +112,6 @@ ofa_pipe = pipeline(
     preprocessor=preprocessor,
     batch_size = bt_sz)
 
-demo_result = ofa_pipe({'image':'http://xingchen-data.oss-cn-zhangjiakou.aliyuncs.com/maas/visual-question-answering/visual_question_answering.png','text':'what is grown on the plant?'})
-print("smoke test demo_result", demo_result)
 """
 results = [result]
 
@@ -128,7 +127,7 @@ from tqdm import tqdm
 def checker_itl(itl):
     return "answer" in itl and not itl["answer"].lower() in ("yes", "no")
 
-is_smoke_test_only = True
+is_smoke_test_only = False
 
 for d in tqdm([test_path, train_path]):
     with open(d.quesion, 'r') as f, open(d.annotation, 'r') as f2, open(d.rationals_path, 'r') as f3:
