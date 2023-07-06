@@ -1,0 +1,14 @@
+question_id:3629415,question:Where would you find this animal in the wild?,image_path:/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/val2014/COCO_val2014_000000362941.jpg,answer:You would find this animal, a zebra, in the wild in Africa, specifically in the savanna and grassland habitats.
+question_id:1105875,question:Can you guess what kind of material is used to make this cap?,image_path:/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/val2014/COCO_val2014_000000110587.jpg,answer:Sorry, I cannot accurately guess the material used to make this cap as the image is blurry and I cannot see the texture or details clearly.
+question_id:5818295,question:What fruit is typically added to the top of cereal?,image_path:/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/val2014/COCO_val2014_000000581829.jpg,answer:There are many types of fruit that can be added to the top of cereal, but some common choices include:
+
+- Bananas
+- Strawberries
+- Blueberries
+- Raspberries
+- Blackberries
+- Apples
+- Peaches
+- Kiwi
+- Mango
+- Grapes
