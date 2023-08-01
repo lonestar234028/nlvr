@@ -1,0 +1,2 @@
+Model	Count	Correct	False Positive	False Negative	PredictY	PredictN	Acc	Coverage
+FiD_2Patch_meanpooling	6953	4078	2602	273	5877	1076	58.53%	99.80%

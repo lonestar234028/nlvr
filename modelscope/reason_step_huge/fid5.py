@@ -80,7 +80,8 @@ for i in tqdm(range(start,end)):
     img2 = img_root + images[1]
     print("img,img1,img2:", img1, img2)
     for prompts in promptsall:
-      
+        if img_key not in prompts:
+            continue
         pmts = prompts[img_key].split('##')
         if len(pmts) != 3:
             continue
@@ -99,7 +100,7 @@ for i in tqdm(range(start,end)):
     result = ofa_pipe(input)
     reason = result[OutputKeys.TEXT][0]
     res[img_key] = reason
-ff = './answers_fid_20230311/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
+ff = './answers_fid_20230714/' + args.filename +  '_part_'+ str(start) +'_' +  str(end) + '.json'
 print("writing:",ff)
 print("res:", res)
 with open(ff, 'w') as f:

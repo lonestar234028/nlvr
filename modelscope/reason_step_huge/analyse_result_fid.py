@@ -10,18 +10,18 @@ print("ann:", len(ann))
 res_all = {}
 i = 0
 res = {}
-f = '20230226.json'
+fname = '/vc_data/users/taoli1/nlvrresearch/modelscope/reason_step_huge/answers_fid_20230714/top13_part_0_6967.json'
 # with open('./answers_fid_two/' + f, 'r') as f: # best
 # with open('./answers_fid/' + f, 'r') as f:
 # with open('./answers_fid_three/' + f, 'r') as f:
-with open('./answers_fid_mean_five/' + f, 'r') as f:
+with open(fname, 'r') as f:
 
     res = json.load( f)
 print("res:", len(res))
 
 # with open('analyse_res_cot_fid_20230127.tsv', 'w',encoding='utf-8') as file:
 # with open('analyse_res_cot_fid_three_20230204.tsv', 'w',encoding='utf-8') as file:
-with open('analyse_res_cot_fid_meanfive_retrieve_20230306.tsv', 'w',encoding='utf-8') as file:
+with open('analyse_res_cot_fid_meanfive_retrieve_20230715_top13.tsv', 'w',encoding='utf-8') as file:
     file.write('Model\tCount\tCorrect\tFalse Positive\tFalse Negative\tPredictY\tPredictN\tAcc\tCoverage\n')
     all = 0
     correct = 0
