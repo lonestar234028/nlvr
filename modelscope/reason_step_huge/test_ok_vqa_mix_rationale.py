@@ -108,12 +108,11 @@ class Question(object):
         
 
 def input_from_question(q):
-    intermidiate = q.question_text
+    intermidiate = [q.question_text]
     for rtl in q.rationals:
         # print("rtl:", rtl)
-        if wanted_prompt in rtl['prompt']: 
-            intermidiate = rtl["prompt"] + ("" if rtl["prompt"].endswith(',') else ", ") + rtl["answer"] + ". Therefore: " + q.question_text 
-    
+        intermidiate_txt = rtl["prompt"] + ("" if rtl["prompt"].endswith(',') else ", ") + rtl["answer"] + ". Therefore: " + q.question_text 
+        intermidiate.append(intermidiate_txt)
     return {'image': q.image_abs_path, 
             'text': intermidiate }
 

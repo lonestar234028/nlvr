@@ -19,7 +19,7 @@ leader_board: https://okvqa.allenai.org/leaderboard.html
 #    mscoco_val2014_annotations.json
 #    OpenEnded_mscoco_train2014_questions.json
 #    OpenEnded_mscoco_val2014_questions.json
-okvqa_path = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/okvqa/annotations/"
+okvqa_path = "/vc_data/users/taoli1/mm/okvqa/annotations/"
 
 test_question_json_path = "OpenEnded_mscoco_val2014_questions.json"
 train_question_json_path = "OpenEnded_mscoco_train2014_questions.json"
@@ -31,7 +31,7 @@ test_pictures_path = "val2014"
 train_pictures_path = "train2014"
 test_picture_file_name_pattern = "COCO_val2014_{pic_name}"
 train_picture_file_name_pattern = "COCO_train2014_{pic_name}"
-okvqa_path_img = "/home/taoli1/.conda/envs/lavis/lib/python3.8/site-packages/lavis/datasets/data/coco/images/"
+okvqa_path_img = "/vc_data/users/taoli1/mm/okvqa/images/"
 
 def pic_path_pattern(pat_str):
     def p(image_id, image_dir):
