@@ -157,7 +157,7 @@ def checker_itl(itl):
 
 is_smoke_test_only = False
 
-for d in tqdm([test_path, train_path]):
+for d in tqdm([train_path]):
     with open(d.quesion, 'r') as f, open(d.annotation, 'r') as f2, open(d.rationals_path, 'r') as f3:
         questions_js = json.load(f)
         questions = list(questions_js["questions"])
